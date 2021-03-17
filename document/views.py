@@ -11,8 +11,8 @@ now = datetime.now()
 def format(request):
     print(request.POST)
     exe='pdf'
-    exe=All_Format.objects.get(name=exe)
-    ava=Available_Format.objects.get(input=exe)
+    exee=All_Format.objects.get(name=exe)
+    ava=Available_Format.objects.get(input=exee)
     formarts=list(Output_Format.objects.filter(available_format=ava).values('output__name'))
     return JsonResponse(formarts,safe=False)
 
