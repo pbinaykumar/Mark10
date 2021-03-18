@@ -28,6 +28,6 @@ class Output_Format(models.Model):
 class Document(models.Model):
     id=models.CharField(max_length=15,primary_key=True)
     output_format=models.CharField(max_length=6,blank=True,null=True)
-    document=models.FileField(upload_to='media/input')
+    document=models.FileField(upload_to='input')
     output_document=models.FileField(upload_to='media/output',blank=True,null=True)
 
