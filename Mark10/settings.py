@@ -25,12 +25,11 @@ SECRET_KEY = '1=k6a#og!#hj2@!#tl=@ru9$l_o@d+ijtsp5)do3wybw=a(x5_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
-
-# Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +39,7 @@ INSTALLED_APPS = [
     'document',
     'corsheaders',
     'rest_framework',
+    'chattingapp'
 ]
 
 MIDDLEWARE = [
@@ -73,6 +73,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Mark10.wsgi.application'
+ASGI_APPLICATION = 'Mark10.routing.application'
 
 
 # Database
@@ -126,3 +127,13 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
