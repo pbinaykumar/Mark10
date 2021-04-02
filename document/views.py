@@ -21,18 +21,29 @@ def format(request):
 
 @csrf_exempt
 def datasave(request):
-    id = now.strftime("%d%m%Y%H%M%S")
-    document=request.FILES.get('doc')
-    data=Document(document=document,id=id)
-    data.save()
-    return JsonResponse({'id':id},safe=False)
+    print(request.FILES,request.POST)
+    exe = request.POST.get('ext')
+    try:
+        exe = All_Format.objects.get(name=exe)
+        ava = Available_Format.objects.get(input=exe)
+        formarts = list(Output_Format.objects.filter(available_format=ava).values('output__name'))
+        id = now.strftime("%d%m%Y%H%M%S")
+        document = request.FILES.get('doc')
+        data = Document(document=document, id=id)
+        data.save()
+    except:
+        print('error')
+        id=404
+        formarts='not found'
+    return JsonResponse({'id':id,'formarts':formarts},safe=False)
 
 @csrf_exempt
 def convert(request):
+    print(request.POST)
     selected_format=request.POST.get('selected_format')
     documentid=request.POST.get('documentid')
     document=Document.objects.get(id=documentid).document
-    print(document,type(document))
+    print(document.name,type(document.name))
 
 
     api_key = 'fd60c2a58929b90c57ad37f4feb484df05b1fa3b'
@@ -43,8 +54,7 @@ def convert(request):
     data_content = {'target_format': target_format}
     res = requests.post(endpoint, data=data_content, files=file_content, auth=HTTPBasicAuth(api_key, ''))
     output1 = res.json()
-    print('output1')
-    print(output1)
+
     if 'id' in output1:
         id = output1['id']
         print(id)
@@ -60,16 +70,15 @@ def convert(request):
             error = 'Sorry!Your file size is more then 1mb.'
         else:
             error = error
-        outputfile='bkp'
 
 
-    link='http://127.0.0.1:8000/media/'+document.name
-    print(link,type(link))
-    # input_file=Input_File(document=document)
-    # input_file.save()
-    outputfile='http://127.0.0.1:8000/'+str(outputfile)
+
+    # output_link='http://127.0.0.1:8000/media/'+document.name
+    inputfilename=request.POST.get('inputfilename')
+    outputfilename=inputfilename[0:inputfilename.rindex('.')+1]+selected_format
+    output_link='http://127.0.0.1:8000/'+str(outputfile)
     print(outputfile,type(outputfile))
-    return JsonResponse({'link':outputfile,'name':document.name},safe=False)
+    return JsonResponse({'link':output_link,'name':outputfilename},safe=False)
 
 
 def checking(job_id):
