@@ -10,14 +10,14 @@ from datetime import datetime
 
 now = datetime.now()
 
-@csrf_exempt
-def format(request):
-    print(request.POST)
-    exe='pdf'
-    exee=All_Format.objects.get(name=exe)
-    ava=Available_Format.objects.get(input=exee)
-    formarts=list(Output_Format.objects.filter(available_format=ava).values('output__name'))
-    return JsonResponse(formarts,safe=False)
+# @csrf_exempt
+# def format(request):
+#     print(request.POST)
+#     exe='pdf'
+#     exee=All_Format.objects.get(name=exe)
+#     ava=Available_Format.objects.get(input=exee)
+#     formarts=list(Output_Format.objects.filter(available_format=ava).values('output__name'))
+#     return JsonResponse(formarts,safe=False)
 
 @csrf_exempt
 def datasave(request):
@@ -64,25 +64,22 @@ def convert(request):
         outputfile=checking(job_id)
         print('out from checking')
         print(outputfile)
+        # output_link='http://127.0.0.1:8000/media/'+document.name
+        inputfilename = request.POST.get('inputfilename')
+        outputfilename = inputfilename[0:inputfilename.rindex('.') + 1] + selected_format
+        output_link = 'http://127.0.0.1:8000/' + str(outputfile)
     elif "errors" in output1:
         error = output1['errors'][0]['message']
         if error == 'the size of file exceeds the maximum file size cap for the current plan':
             error = 'Sorry!Your file size is more then 1mb.'
         else:
             error = error
-
-
-
-    # output_link='http://127.0.0.1:8000/media/'+document.name
-    inputfilename=request.POST.get('inputfilename')
-    outputfilename=inputfilename[0:inputfilename.rindex('.')+1]+selected_format
-    output_link='http://127.0.0.1:8000/'+str(outputfile)
-    print(outputfile,type(outputfile))
+        outputfilename = error
+        output_link = 'error'
     return JsonResponse({'link':output_link,'name':outputfilename},safe=False)
 
 
 def checking(job_id):
-    outputfilename=None
     api_key = 'fd60c2a58929b90c57ad37f4feb484df05b1fa3b'
     endpoint = "https://sandbox.zamzar.com/v1/jobs/{}".format(job_id)
     response = requests.get(endpoint, auth=HTTPBasicAuth(api_key, ''))
@@ -90,9 +87,7 @@ def checking(job_id):
     print('output2')
     print(output2)
     if 'successful' in output2.values():
-
         local_filename = output2["target_files"][0]["name"]
-        outputfilename=local_filename
         file_id = output2["target_files"][0]["id"]
         endpoint = "https://sandbox.zamzar.com/v1/files/{}/content".format(file_id)
 
@@ -115,12 +110,16 @@ def checking(job_id):
     else:
         time.sleep(2)
         file=checking(job_id)
-    # print(outputfilename,type(outputfilename))
     # outputfile="media/Output/"+ str(outputfilename)
-    # print(outputfile)
     return file
 
 
+def massaddformat(request):
+    # data=['csv','djvu','doc','docx','eml','eps','key','mpp','msg','numbers','odp','ods','odt','pages','pdf','pps','ppsx','ppt','pptx','ps','pub','rtf','txt','vsd','vsdx','wks','wpd','wps','xlr','xls','xlsx','xps']
+    # for formatt in data:
+    #     newf=All_Format(name=formatt)
+    #     newf.save()
+    return JsonResponse('Finished',safe=False)
 
 
 
