@@ -67,7 +67,7 @@ def convert(request):
         # output_link='http://127.0.0.1:8000/media/'+document.name
         inputfilename = request.POST.get('inputfilename')
         outputfilename = inputfilename[0:inputfilename.rindex('.') + 1] + selected_format
-        output_link = 'http://127.0.0.1:8000/' + str(outputfile)
+        output_link = str(outputfile)
     elif "errors" in output1:
         error = output1['errors'][0]['message']
         if error == 'the size of file exceeds the maximum file size cap for the current plan':

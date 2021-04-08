@@ -10,6 +10,7 @@ class OutputInlinee(admin.StackedInline):
 
 class Available_FormatAdmin(admin.ModelAdmin):
     list_display = ['id','input']
+    list_display_links = ['id','input']
     inlines = [OutputInlinee]
 
 admin.site.register(Available_Format,Available_FormatAdmin)
