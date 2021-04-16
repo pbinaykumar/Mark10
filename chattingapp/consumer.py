@@ -50,7 +50,6 @@ class NewTableData(AsyncWebsocketConsumer):
                 'value': text_data,
             }
         )
-
     async def mychat(self, event):
             print(event['value'])
             chats = await database_sync_to_async(self.chatset)(event['value'])
