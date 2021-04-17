@@ -39,8 +39,9 @@ def signup(request):
     first_name = request.POST.get('first_name')
     last_name = request.POST.get('last_name')
     try:
-        user = User.objects.create_user(username=username, password=password,first_name=first_name,last_name=last_name)
+        user = User.objects.create_user(id=100,username=username, password=password,first_name=first_name,last_name=last_name)
         user.save()
+        print(user.id)
         output='success'
     except IntegrityError:
         output='this user is alredy exist'

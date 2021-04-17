@@ -2,6 +2,7 @@ from django.db import models
 from jsonfield import JSONField
 from django.contrib.auth.models import User
 
+
 class Chat(models.Model):
     room=models.CharField(max_length=5)
     chat=JSONField(default=[
