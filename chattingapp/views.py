@@ -38,13 +38,17 @@ def signup(request):
     password = request.POST.get("password")
     first_name = request.POST.get('first_name')
     last_name = request.POST.get('last_name')
-    try:
-        user = User.objects.create_user(id=100,username=username, password=password,first_name=first_name,last_name=last_name)
-        user.save()
-        print(user.id)
-        output='success'
-    except IntegrityError:
-        output='this user is alredy exist'
+    # try:
+    user_idd=unique_user_id()
+    print('user_id')
+    print(user_idd)
+    user = User.objects.create_user(id=202,username=username, password=password,first_name=first_name,last_name=last_name)
+    user.save()
+    print('user_id')
+    print(user.id)
+    output='success'
+    # except IntegrityError:
+    #     output='this user is alredy exist'
     return JsonResponse({'output': output},safe=False)
 
 @csrf_exempt
@@ -56,7 +60,8 @@ def signin(request):
         if user:
             auth.login(request, user)
             status=True
-            log={"username":user.username,'first_name':user.first_name,'last_name':user.last_name}
+            print(user.id)
+            log={"username":user.username,'first_name':user.first_name,'last_name':user.last_name,'user_id':user.id}
         else:
             status=False
             log='wrong password'
@@ -67,7 +72,7 @@ def signin(request):
 
 
 @csrf_exempt
-def unique_id():
+def unique_connection_id():
     connection_id=Connection_Room.objects.all().values('connection_id').last()
     if connection_id == None or int(connection_id['connection_id'][1:9]) != int(datetime.now().strftime("%Y%m%d")):
         count=1
@@ -88,7 +93,7 @@ def new_connection(request):
     check1=Connection_Room.objects.filter(user1=user1,user2=user2)
     check2=Connection_Room.objects.filter(user1=user2,user2=user1)
     if len(check1)==0 and len(check2)==0:
-        connection_id=unique_id()
+        connection_id=unique_connection_id()
         new_conn=Connection_Room(user1=user1,user2=user2,connection_id=connection_id)
         new_conn.save()
         status='success'
@@ -110,3 +115,9 @@ def chats(request):
     connection_id=request.POST.get('connection_id')
     chat=Connection_Room.objects.get(connection_id=connection_id).chat
     return JsonResponse(chat,safe=False)
+
+@csrf_exempt
+def unique_user_id():
+    now = datetime.now()
+    id = now.strftime("%Y%m%d%H%M%S")
+    return id

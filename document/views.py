@@ -10,18 +10,8 @@ from datetime import datetime
 
 now = datetime.now()
 
-# @csrf_exempt
-# def format(request):
-#     print(request.POST)
-#     exe='pdf'
-#     exee=All_Format.objects.get(name=exe)
-#     ava=Available_Format.objects.get(input=exee)
-#     formarts=list(Output_Format.objects.filter(available_format=ava).values('output__name'))
-#     return JsonResponse(formarts,safe=False)
-
 @csrf_exempt
 def datasave(request):
-    print(request.FILES,request.POST)
     exe = request.POST.get('ext')
     try:
         exe = All_Format.objects.get(name=exe)
@@ -32,20 +22,15 @@ def datasave(request):
         data = Document(document=document, id=id)
         data.save()
     except:
-        print('error')
         id=404
         formarts='not found'
     return JsonResponse({'id':id,'formarts':formarts},safe=False)
 
 @csrf_exempt
 def convert(request):
-    print(request.POST)
     selected_format=request.POST.get('selected_format')
     documentid=request.POST.get('documentid')
     document=Document.objects.get(id=documentid).document
-    print(document.name,type(document.name))
-
-
     api_key = 'fd60c2a58929b90c57ad37f4feb484df05b1fa3b'
     endpoint = "https://sandbox.zamzar.com/v1/jobs"
     source_file = 'media/'+document.name
