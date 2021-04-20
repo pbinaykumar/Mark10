@@ -38,11 +38,12 @@ def signup(request):
     password = request.POST.get("password")
     first_name = request.POST.get('first_name')
     last_name = request.POST.get('last_name')
+    id = request.POST.get('id')
     # try:
     user_idd=unique_user_id()
     print('user_id')
     print(user_idd)
-    user = User.objects.create_user(id=202,username=username, password=password,first_name=first_name,last_name=last_name)
+    user = User.objects.create_user(id=user_idd,username=username, password=password,first_name=first_name,last_name=last_name)
     user.save()
     print('user_id')
     print(user.id)
@@ -119,5 +120,19 @@ def chats(request):
 @csrf_exempt
 def unique_user_id():
     now = datetime.now()
-    id = now.strftime("%Y%m%d%H%M%S")
-    return id
+    old_id = User.objects.all().values('id').last()
+    last_id = str(old_id['id'])[8:]
+    id = now.strftime("%Y%m%d%H")[2:]
+    print('last_id')
+    print(str(old_id['id'])[0:6])
+    print(id)
+    if len(last_id) == 0 or id !=str(old_id['id'])[0:8]:
+        last_id = '01'
+    else:
+        last_id = int(last_id) + 1
+        last_id = str('%02d' % last_id)
+    new_id = id + last_id
+    return new_id
+
+
+
