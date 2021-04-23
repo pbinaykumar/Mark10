@@ -2,15 +2,15 @@ from django.db import models
 
 class All_Format(models.Model):
     id=models.AutoField(primary_key=True)
-    name=models.CharField(max_length=8)
+    name=models.CharField(max_length=8,unique=True)
 
     def __str__(self):
-        return self.name+str(self.id)
+        return self.name+'('+str(self.id)+')'
 class File_Type(models.Model):
     id = models.AutoField(primary_key=True)
     name=models.CharField(max_length=15)
     def __str__(self):
-        return self.name+str(self.id)
+        return self.name+'('+str(self.id)+')'
 
 class Available_Format(models.Model):
     id = models.AutoField(primary_key=True)

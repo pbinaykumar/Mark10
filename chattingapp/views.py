@@ -84,11 +84,12 @@ def unique_connection_id():
 
 @csrf_exempt
 def new_connection(request):
+    print(request.POST)
     user1_id=request.POST.get('user1_id')
     user2_id=request.POST.get('user2_id')
-    user1=User.objects.get(username=user1_id)
+    user1=User.objects.get(id=user1_id)
     try:
-        user2=User.objects.get(username=user2_id)
+        user2=User.objects.get(id=user2_id)
     except:
         return JsonResponse("user does't exist", safe=False)
     check1=Connection_Room.objects.filter(user1=user1,user2=user2)
@@ -105,11 +106,22 @@ def new_connection(request):
 @csrf_exempt
 def my_friends(request):
     user_id = request.POST.get('user1_id')
-    user = User.objects.get(username=user_id)
+    user = User.objects.get(id=user_id)
     flist1 = list(Connection_Room.objects.filter(user1=user).values('user2__first_name','connection_id'))
     flist2 = list(Connection_Room.objects.filter(user2=user).values('user1__first_name','connection_id'))
     flists=[flist1,flist2]
     return JsonResponse({'flists':flists},safe=False)
+
+@csrf_exempt
+def search_friend(request):
+    print(request.POST)
+    user_id = request.POST.get('search_id')
+    print(user_id)
+    user = User.objects.get(id=user_id)
+    fr_name=user.first_name
+
+    print(fr_name)
+    return JsonResponse({'name':fr_name,'id':user_id},safe=False)
 
 @csrf_exempt
 def chats(request):

@@ -11,4 +11,5 @@ urlpatterns = [
     path('new-connection',views.new_connection),
     path('friends',views.my_friends),
     path('chats',views.chats),
+    path('search-friend',views.search_friend),
 ]
