@@ -105,6 +105,17 @@ def massaddformat(request):
     #     newf=All_Format(name=formatt)
     #     newf.save()
     return JsonResponse('Finished',safe=False)
+@csrf_exempt
+def check(request):
+    res=list(All_Format.objects.all().values('name'))
+    print(res)
+    a=[]
+    for i in res:
+        print(i['name'])
+        a.append(i['name'])
 
 
+    print(a)
+
+    return JsonResponse(a,safe=False)
 

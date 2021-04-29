@@ -12,6 +12,7 @@ class TableData(AsyncWebsocketConsumer):
         )
         await self.accept()
 
+
     async def disconnect(self, code):
         pass
 
@@ -28,7 +29,6 @@ class TableData(AsyncWebsocketConsumer):
             print(event['value'])
             await self.send(event['value'])
 
-
 class NewTableData(AsyncWebsocketConsumer):
     async def connect(self):
         room_name = self.scope['url_route']['kwargs']['id']
@@ -43,23 +43,30 @@ class NewTableData(AsyncWebsocketConsumer):
         pass
 
     async def receive(self, text_data):
+        print('ok')
+        chats = await database_sync_to_async(self.chatset)(text_data)
+
         await self.channel_layer.group_send(
             self.group_name,
             {
                 'type': 'mychat',
-                'value': text_data,
+                'value': chats,
+
             }
         )
     async def mychat(self, event):
+            # chats = await database_sync_to_async(self.chatset)(event['value'])
             print(event['value'])
-            chats = await database_sync_to_async(self.chatset)(event['value'])
-            print(chats)
-            await self.send(chats)
+            await self.send(event['value'])
     def chatset(self,chat):
+        chat=json.loads(chat)
+        print('chat')
+        print(chat,type(chat))
         chats=Connection_Room.objects.get(connection_id=self.group_name)
         allchat = chats.chat
-        if chat != 'undefined' and chat != '':
-            allchat.append([chat, chat])
+        if chat[1] != 'undefined' and chat[1] != '':
+            print('ifffffff')
+            allchat.append([chat[0], chat[1]])
             chats.chat = allchat
             chats.save()
         chats = list(Connection_Room.objects.filter(connection_id=self.group_name).values('chat'))
