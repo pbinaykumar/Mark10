@@ -6,7 +6,7 @@ from chattingapp import consumer
 ws_pattern = [
     # To set up the websocket routing
     path("ws",consumer.TableData),
-    path("chat/<str:id>",consumer.NewTableData),
+    path("wschat/<str:id>",consumer.NewTableData),
 
 ]
 
