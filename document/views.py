@@ -1,12 +1,14 @@
 import time
-
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
 import requests
-from .models import Available_Format, Output_Format,All_Format,Document
+from .models import Available_Format, Output_Format,All_Format,Document,Client
 from requests.auth import HTTPBasicAuth
 from datetime import datetime
+from .mail import html
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 now = datetime.now()
 
@@ -113,9 +115,34 @@ def check(request):
     for i in res:
         print(i['name'])
         a.append(i['name'])
-
-
-    print(a)
-
     return JsonResponse(a,safe=False)
+
+@csrf_exempt
+def contactus(request):
+    name=request.POST.get('name')
+    email=request.POST.get('email')
+    phone=request.POST.get('phone')
+    subject=request.POST.get('subject')
+    message=request.POST.get('message')
+    new_client=Client(name=name,email=email,phone=phone,subject=subject,message=message)
+    new_client.save()
+    send_mail(email,name)
+    return JsonResponse(True,safe=False)
+
+def send_mail(receiver_client, client_name):
+    print(receiver_client)
+    sender = "support@clowndev.com"
+    # admin_receiver = "admin@clowndev.com"
+    password = r"Vy0BZrBMkyp4"
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = "Hey there new mail from Clowndev!!"
+    msg['From'] = sender
+    msg['To'] = receiver_client
+    part2 = MIMEText(html, 'html')
+    msg.attach(part2)
+    s = smtplib.SMTP_SSL('smtp.zoho.in')
+    s.login(sender, password)
+    s.sendmail(sender, receiver_client, msg.as_string())
+    s.quit()
+    return True
 

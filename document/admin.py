@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import All_Format,Available_Format,Output_Format,Document,File_Type
+from .models import All_Format,Available_Format,Output_Format,Document,File_Type,Client
 
 admin.site.register(All_Format)
 admin.site.register(Output_Format)
@@ -16,5 +16,6 @@ class Available_FormatAdmin(admin.ModelAdmin):
 admin.site.register(Available_Format,Available_FormatAdmin)
 admin.site.register(File_Type)
 admin.site.register(Document)
+admin.site.register(Client)
 
 

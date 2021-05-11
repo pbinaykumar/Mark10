@@ -8,6 +8,7 @@ urlpatterns = [
     path('convert',views.convert),
     path('datasave',views.datasave),
     path('check',views.check),
+    path('contactus',views.contactus),
     # path('addformat',views.massaddformat),
 
 ]
