@@ -25,7 +25,7 @@ def datasave(request):
         data.save()
     except:
         id=404
-        formarts='not found'
+        formarts='conversion for this format is not available'
     return JsonResponse({'id':id,'formarts':formarts},safe=False)
 
 @csrf_exempt
