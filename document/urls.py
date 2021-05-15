@@ -7,7 +7,7 @@ urlpatterns = [
     # path('get-formats',views.format),
     path('convert',views.convert),
     path('datasave',views.datasave),
-    path('check',views.check),
+    # path('check',views.check2),
     path('contactus',views.contactus),
     # path('addformat',views.massaddformat),
 

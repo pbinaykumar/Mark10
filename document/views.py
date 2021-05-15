@@ -101,21 +101,26 @@ def checking(job_id):
     return file
 
 
-def massaddformat(request):
-    # data=['csv','djvu','doc','docx','eml','eps','key','mpp','msg','numbers','odp','ods','odt','pages','pdf','pps','ppsx','ppt','pptx','ps','pub','rtf','txt','vsd','vsdx','wks','wpd','wps','xlr','xls','xlsx','xps']
-    # for formatt in data:
-    #     newf=All_Format(name=formatt)
-    #     newf.save()
-    return JsonResponse('Finished',safe=False)
+
 @csrf_exempt
 def check(request):
     res=list(All_Format.objects.all().values('name'))
-    print(res)
     a=[]
+    b=[]
     for i in res:
-        print(i['name'])
         a.append(i['name'])
-    return JsonResponse(a,safe=False)
+    for data in a:
+        c=a.count(data)
+        if c!=1:
+            b.append({data:c})
+    print(b)
+    return JsonResponse(b,safe=False)
+
+@csrf_exempt
+def check2(request):
+    res=list(Output_Format.objects.all().values())
+    print(res)
+    return JsonResponse(res,safe=False)
 
 @csrf_exempt
 def contactus(request):
@@ -132,7 +137,7 @@ def contactus(request):
 def send_mail(receiver_client, client_name):
     print(receiver_client)
     sender = "support@clowndev.com"
-    # admin_receiver = "admin@clowndev.com"
+    admin_receiver = "admin@clowndev.com"
     password = r"Vy0BZrBMkyp4"
     msg = MIMEMultipart('alternative')
     msg['Subject'] = "Hey there new mail from Clowndev!!"
@@ -144,5 +149,60 @@ def send_mail(receiver_client, client_name):
     s.login(sender, password)
     s.sendmail(sender, receiver_client, msg.as_string())
     s.quit()
+
+    #to admin
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = "Hey there new clint Fileconvert!!"
+    msg['From'] = sender
+    msg['To'] = admin_receiver
+    part2 = MIMEText(html, 'html')
+    msg.attach(part2)
+    s = smtplib.SMTP_SSL('smtp.zoho.in')
+    s.login(sender, password)
+    s.sendmail(sender, admin_receiver, msg.as_string())
+    s.quit()
     return True
 
+def massaddformat(request):
+    import requests
+    from requests.auth import HTTPBasicAuth
+
+    api_key = 'fd60c2a58929b90c57ad37f4feb484df05b1fa3b'
+    endpoint = "https://api.zamzar.com/v1/formats"
+
+    response = requests.get(endpoint, auth=HTTPBasicAuth(api_key, ''))
+    data = response.json()
+
+    for data in data['data']:
+        av=data['name']
+        print(av, '-----')
+        try:
+            allfor=All_Format.objects.get(name=av)
+        except:
+            allfor=All_Format(name=av)
+            allfor.save()
+
+        try:
+            avf=Available_Format.objects.get(input=allfor)
+        except:
+            avf=Available_Format(input=allfor)
+            avf.save()
+
+        for data in data['targets']:
+            ot=data['name']
+            print(ot)
+            try:
+                allfor = All_Format(name=ot)
+                allfor.save()
+            except:
+                allfor = All_Format.objects.get(name=ot)
+
+            try:
+                Output_Format.objects.get(available_format=avf,output=allfor)
+            except:
+                print('-----')
+                newo=Output_Format(available_format=avf,output=allfor)
+                newo.save()
+
+
+    return JsonResponse(True,safe=False)
